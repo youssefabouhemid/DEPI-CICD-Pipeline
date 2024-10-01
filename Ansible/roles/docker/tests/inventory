@@ -1,0 +1,4 @@
+[jenkins]
+jenkins_instance ansible_host=18.232.66.253 
+ansible_user=ubuntu 
+ansible_ssh_private_key_file=my-terraform-key.pem
