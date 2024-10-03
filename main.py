@@ -10,4 +10,5 @@ def resolve_nginx():
         print("Error resolving the DNS")
 
 if __name__ == "__main__":
-    resolve_nginx()
+    while(True):
+        resolve_nginx()

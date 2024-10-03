@@ -101,6 +101,7 @@ docker run \
 
 
 
-# notes:
+# NOTES:
 # need access to port 8080 from security group
 # and http and ssh access 
+# and the container NEEDS ECRACCESS IAM ROLE ATTACHED TO IT !!!!!!!!
