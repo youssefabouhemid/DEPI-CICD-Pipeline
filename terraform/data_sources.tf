@@ -1,10 +1,24 @@
 # data_sources.tf
 
-# Create a Key Pair
-resource "aws_key_pair" "terraform_key" {
-  key_name   = "my-terraform-key"  # Name of the key pair in AWS
-  public_key = file("~/.ssh/id_rsa.pub")  # Path to your public key
+# Generate a private key (PEM format)
+resource "tls_private_key" "terraform_key" {
+  algorithm = "RSA"
+  rsa_bits  = 4096
 }
+
+# Save the private key as a PEM file locally using a local file provisioner
+resource "local_file" "save_pem" {
+  filename = "~/.ssh/my-terraform-key.pem"  # This will save the file locally
+  content  = tls_private_key.terraform_key.private_key_pem
+  file_permission = "0400"  # Set appropriate permissions for the PEM file
+}
+
+# Use the generated public key to create the AWS Key Pair
+resource "aws_key_pair" "terraform_key" {
+  key_name   = "my-terraform-key"
+  public_key = tls_private_key.terraform_key.public_key_openssh
+}
+
 
 # Define a VPC
 resource "aws_vpc" "main" {
@@ -18,11 +32,12 @@ resource "aws_route_table_association" "public" {
   route_table_id = aws_route_table.public.id
 }
 
-# Fetch a specific security group by name
+# Fetch the Security Group by Tag
 data "aws_security_group" "ssh_sg" {
   filter {
-    name   = "group-name"
-    values = ["httpd-webserver-sg"]  # Replace with your actual security group name
+    name   = "tag:Name"  # Use the key of the tag you want to filter on
+    values = ["k3s_sg"]   # The value you assigned to the tag
   }
-  vpc_id = aws_vpc.main.id  # Ensure this references the VPC we created
+
+  vpc_id = aws_vpc.main.id 
 }

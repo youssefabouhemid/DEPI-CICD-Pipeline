@@ -9,13 +9,13 @@ data "aws_ami" "ubuntu" {
   }
 }
 
-# You can define your EC2 instances here, making sure to reference the VPC, subnet, and security group
+
 resource "aws_instance" "k3s_instance" {
-  ami                    = data.aws_ami.ubuntu.id  # Use the fetched Ubuntu AMI
+  ami                    = data.aws_ami.ubuntu.id
   instance_type         = "t2.micro"
-  key_name              = aws_key_pair.terraform_key.key_name  # Use the created key pair
-  subnet_id             = aws_subnet.public.id  # Ensure it's attached to the public subnet
-  vpc_security_group_ids = [data.aws_security_group.ssh_sg.id]  # Use the fetched security group
+  key_name              = aws_key_pair.terraform_key.key_name
+  subnet_id             = aws_subnet.public.id
+  vpc_security_group_ids = [data.aws_security_group.ssh_sg.id]   # Reference the created SG directly
 
   user_data = <<-EOF
               #!/bin/bash
@@ -30,11 +30,11 @@ resource "aws_instance" "k3s_instance" {
 }
 
 resource "aws_instance" "jenkins_instance" {
-  ami                    = data.aws_ami.ubuntu.id  # Use the fetched Ubuntu AMI
+  ami                    = data.aws_ami.ubuntu.id
   instance_type         = "t2.micro"
-  key_name              = aws_key_pair.terraform_key.key_name  # Use the created key pair
-  subnet_id             = aws_subnet.public.id  # Ensure it's attached to the public subnet
-  vpc_security_group_ids = [data.aws_security_group.ssh_sg.id]  # Use the fetched security group
+  key_name              = aws_key_pair.terraform_key.key_name
+  subnet_id             = aws_subnet.public.id
+  vpc_security_group_ids = [data.aws_security_group.ssh_sg.id]   # Reference the created SG directly
 
   tags = {
     Name = "jenkins-instance"
