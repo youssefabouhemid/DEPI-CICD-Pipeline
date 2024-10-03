@@ -1,9 +1,16 @@
-output "k3s_instance_public_ip" {
-  value = aws_instance.k3s_instance.public_ip
+# outputs.tf
+
+# Output for k3s EC2 instance ID
+output "k3s_instance_id" {
+  value = aws_instance.k3s_instance.id
 }
 
-output "jenkins_instance_public_ip" {
-  value = aws_instance.jenkins_instance.public_ip
+# Output for Jenkins EC2 instance ID
+output "jenkins_instance_id" {
+  value = aws_instance.jenkins_instance.id
 }
-# jenkins_instance_public_ip = "50.16.52.70"
-# k3s_instance_public_ip = "3.89.39.92"
+
+# Output ECR repository URL
+output "ecr_repository_url" {
+  value = aws_ecr_repository.python_app.repository_url
+}
