@@ -1,8 +1,13 @@
 ---
 # roles/jenkins/tasks/main.yml
+- name: Create a directory for the Dockerfile
+  ansible.builtin.file:
+    path: ./dockerfiles
+    state: directory
+
 - name: Create Jenkins Dockerfile
-  copy:
-    dest: /opt/jenkins/Dockerfile
+  ansible.builtin.copy:
+    dest: ./dockerfiles/Dockerfile  # Ensure the Dockerfile is named correctly
     content: |
       FROM jenkins/jenkins:2.462.2-jdk17
       USER root
@@ -19,8 +24,9 @@
 
 - name: Build Jenkins Docker image
   community.docker.docker_image:
+    source: build
     build:
-      path: /opt/jenkins
+      path: ./dockerfiles
     name: myjenkins-blueocean
     tag: 2.462.3-1
 

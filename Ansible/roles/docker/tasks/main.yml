@@ -19,10 +19,17 @@
     mode: '0755'
 
 - name: Download Docker GPG key
-  ansible.builtin.get_url:
-    url: https://download.docker.com/linux/ubuntu/gpg
-    dest: /etc/apt/keyrings/docker.asc
+  ansible.builtin.shell: |
+    curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc
+  args:
+    creates: /etc/apt/keyrings/docker.asc  # Only run if the file doesn't exist
+  register: curl_result
+
+- name: Set permissions on Docker GPG key
+  ansible.builtin.file:
+    path: /etc/apt/keyrings/docker.asc
     mode: '0644'
+  when: curl_result.changed  # Run this only if the download command changed the state
 
 - name: Add Docker apt repository
   ansible.builtin.apt_repository:
@@ -32,6 +39,11 @@
 - name: Update apt package index after adding Docker repo
   apt:
     update_cache: yes
+
+- name: Update Apt package index
+  ansible.builtin.apt:
+    update_cache: yes
+
 
 - name: Install Docker and its components
   apt:
