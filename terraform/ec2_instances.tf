@@ -15,7 +15,7 @@ resource "aws_instance" "k3s_instance" {
   instance_type         = "t2.micro"
   key_name              = aws_key_pair.terraform_key.key_name
   subnet_id             = aws_subnet.public.id
-  vpc_security_group_ids = [data.aws_security_group.ssh_sg.id]   # Reference the created SG directly
+  vpc_security_group_ids = [aws_security_group.k3s_sg.id]   # Reference the created SG directly
 
   user_data = <<-EOF
               #!/bin/bash
@@ -34,7 +34,7 @@ resource "aws_instance" "jenkins_instance" {
   instance_type         = "t2.micro"
   key_name              = aws_key_pair.terraform_key.key_name
   subnet_id             = aws_subnet.public.id
-  vpc_security_group_ids = [data.aws_security_group.ssh_sg.id]   # Reference the created SG directly
+  vpc_security_group_ids = [aws_security_group.k3s_sg.id]   # Reference the created SG directly
 
   tags = {
     Name = "jenkins-instance"

@@ -31,13 +31,3 @@ resource "aws_route_table_association" "public" {
   subnet_id      = aws_subnet.public.id
   route_table_id = aws_route_table.public.id
 }
-
-# Fetch the Security Group by Tag
-data "aws_security_group" "ssh_sg" {
-  filter {
-    name   = "tag:Name"  # Use the key of the tag you want to filter on
-    values = ["k3s_sg"]   # The value you assigned to the tag
-  }
-
-  vpc_id = aws_vpc.main.id 
-}
