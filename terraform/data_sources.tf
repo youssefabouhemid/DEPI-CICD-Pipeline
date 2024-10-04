@@ -8,7 +8,7 @@ resource "tls_private_key" "terraform_key" {
 
 # Save the private key as a PEM file locally using a local file provisioner
 resource "local_file" "save_pem" {
-  filename = "~/.ssh/my-terraform-key.pem"  # This will save the file locally
+  filename = ".ssh/my-terraform-key.pem"  # This will save the file locally
   content  = tls_private_key.terraform_key.private_key_pem
   file_permission = "0400"  # Set appropriate permissions for the PEM file
 }

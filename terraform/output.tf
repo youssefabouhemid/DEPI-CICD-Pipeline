@@ -16,6 +16,14 @@ output "jenkins_instance_id" {
   value = aws_instance.jenkins_instance.id
 }
 
+output "k3s_instance_public_ip" {
+  value = aws_instance.k3s_instance.public_ip
+}
+
+output "jenkins_instance_public_ip" {
+  value = aws_instance.jenkins_instance.public_ip
+}
+
 # Output ECR repository URL
 output "ecr_repository_url" {
   value = aws_ecr_repository.python_app.repository_url
