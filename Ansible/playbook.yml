@@ -1,7 +1,0 @@
----
-- name: Configure Jenkins and Docker on EC2 instance
-  hosts: jenkins_docker
-  become: true
-  roles:
-    - docker
-    - jenkins

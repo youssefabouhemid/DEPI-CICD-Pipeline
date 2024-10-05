@@ -1,0 +1,84 @@
+- name: Install and set up Docker
+  hosts: jenkins-server
+  become: true
+  tasks:
+    - name: Add Docker GPG apt Key
+      ansible.builtin.apt_key:
+        url: https://download.docker.com/linux/ubuntu/gpg
+        state: present
+
+    - name: Add Docker Repository
+      ansible.builtin.apt_repository:
+        repo: deb https://download.docker.com/linux/ubuntu focal stable
+        state: present
+
+    - name: Install Docker packages
+      ansible.builtin.apt:
+        name:
+          - docker-ce
+          - docker-ce-cli
+          - containerd.io
+          - docker-buildx-plugin
+          - docker-compose-plugin
+        state: latest
+        update_cache: true
+    
+    - name: Create Jenkins network
+      community.docker.docker_network:
+        name: jenkins
+        
+
+
+
+- name: Run Jenkins and Docker-in-Docker containers
+  hosts: jenkins-server
+  become: true
+  tasks:
+    - name: Run Docker-in-Docker
+      community.docker.docker_container:
+        name: jenkins-docker
+        image: docker:dind
+        state: started
+        restart_policy: on-failure
+        detach: true
+        privileged: true
+        networks:
+          - name: jenkins
+            aliases:
+              - docker
+        env:
+          DOCKER_TLS_CERTDIR: "/certs"
+        volumes:
+          - jenkins-docker-certs:/certs/client
+          - jenkins-data:/var/jenkins_home
+        published_ports:
+          - "2376:2376"
+        command: "--storage-driver overlay2"
+
+    - name: Run Jenkins Blue Ocean container
+      community.docker.docker_container:
+        name: jenkins-blueocean
+        image: youssefabouhemid/depi-jenkins-aws:v1.0
+        state: started
+        restart_policy: on-failure
+        detach: true
+        networks:
+          - name: jenkins
+        env:
+          DOCKER_HOST: "tcp://docker:2376"
+          DOCKER_CERT_PATH: "/certs/client"
+          DOCKER_TLS_VERIFY: "1"
+        volumes:
+          - jenkins-data:/var/jenkins_home
+          - jenkins-docker-certs:/certs/client:ro
+        published_ports:
+          - "8080:8080"
+          - "50000:50000"
+
+    # - name: Get Jenkins Password
+    #   ansible.builtin.shell: "docker exec jenkins-blueocean cat /var/jenkins_home/secrets/initialAdminPassword"
+    #   register: jenkins_password_output
+
+    # - name: Display Jenkins Password
+    #   ansible.builtin.debug:
+    #     var: jenkins_password_output.stdout
