@@ -1,0 +1,5 @@
+kubectl create secret docker-registry myregistrykey \
+  --docker-server=REGISTRY URI \
+  --docker-username=AWS \
+  --docker-password=$(aws ecr get-login-password --region us-east-1) \
+  --docker-email=YOUR_EMAIL
