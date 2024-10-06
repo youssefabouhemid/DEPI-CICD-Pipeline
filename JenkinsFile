@@ -1,12 +1,12 @@
 pipeline {
-    agent any 
+    agent any
 
     stages {
         stage('Build Docker Image') {
             steps {
                 script {
                     // Build the Docker image using the Dockerfile in the current directory
-                    docker.build("python_app_image:latest", ".") // Tag as latest
+                    docker.build('python_app_image:latest', '.') // Tag as latest
                 }
             }
         }
@@ -28,9 +28,34 @@ pipeline {
             }
         }
 
-        stage('Notify Kuberenetes'){
-            steps{
-                
+        stage('Apply/Notify Kubernetes') {
+            steps {
+                sshPublisher(
+                    publishers: [
+                        sshPublisherDesc(
+                            configName: 'kuberenetes_server',
+                            transfers: [
+                                sshTransfer(
+                                    cleanRemote: false,
+                                    excludes: '',
+                                    execCommand: 'kubectl apply -f test.txt 2> log.txt',
+                                    execTimeout: 120000,
+                                    flatten: false,
+                                    makeEmptyDirs: false,
+                                    noDefaultExcludes: false,
+                                    patternSeparator: '[, ]+',
+                                    remoteDirectory: '',
+                                    remoteDirectorySDF: false,
+                                    removePrefix: '',
+                                    sourceFiles: ''
+                                )
+                            ],
+                            usePromotionTimestamp: false,
+                            useWorkspaceInPromotion: false,
+                            verbose: false
+                        )
+                    ]
+                )
             }
         }
     }
