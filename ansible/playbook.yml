@@ -85,7 +85,7 @@
 
 
 
-- name: Copy K8s Manifest Files
+- name: Copy K8s Manifest Files and Configure Secrets
   hosts: kubernetes-server
   become: true
   tasks:
@@ -93,6 +93,15 @@
       ansible.builtin.copy:
         src: ../kubernetes
         dest: /home/ubuntu/
-        
+    
+    - name: Create Docker Registry Secret
+      ansible.builtin.shell: |
+        kubectl create secret docker-registry myregistrykey \
+          --docker-server=539247483379.dkr.ecr.us-east-1.amazonaws.com/python/depi_project:latest \
+          --docker-username=AWS \
+          --docker-password=$(aws ecr get-login-password --region us-east-1) \
+          --docker-email=youssefabouhemid@gmail.com
+
+
         
     
