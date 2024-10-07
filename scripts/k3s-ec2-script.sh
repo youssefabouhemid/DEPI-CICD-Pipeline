@@ -1,3 +1,7 @@
+#!/bin/bash
+
+su - ubuntu -c 'bash -s' <<'EOF'
+
 # Install k3s
 curl -sfL https://get.k3s.io | sh -
 
