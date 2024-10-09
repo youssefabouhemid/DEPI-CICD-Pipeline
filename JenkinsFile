@@ -10,6 +10,10 @@
         // Poll SCM with empty schedule
         // Pipeline from SCM
 
+// awsRegion = "us-east-1"
+// ecrRepo = "python/depi_project"
+// accountId = "539247483379"
+
 pipeline {
     agent any
 
@@ -50,7 +54,7 @@ pipeline {
                                 sshTransfer(
                                     cleanRemote: false,
                                     excludes: '',
-                                    execCommand: 'kubectl apply -f python-deployment.yaml 2> log.txt',
+                                    execCommand: 'kubectl apply -f kubernetes/python-deployment.yaml 2> log.txt',
                                     execTimeout: 120000,
                                     flatten: false,
                                     makeEmptyDirs: false,
