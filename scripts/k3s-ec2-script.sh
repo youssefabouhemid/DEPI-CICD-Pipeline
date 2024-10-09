@@ -1,17 +1,32 @@
 #!/bin/bash
 
-# Update the system and install necessary packages
-sudo apt-get update -y
-sudo apt-get install -y curl
+su - ubuntu -c 'bash -s' <<'EOF'
 
 # Install k3s
 curl -sfL https://get.k3s.io | sh -
 
-# Set up permissions on the k3s.yaml configuration file
-sudo chmod 644 /etc/rancher/k3s/k3s.yaml
+# add kubeconfig for user:
+export KUBECONFIG=~/.kube/config
+mkdir ~/.kube
+sudo k3s kubectl config view --raw > "$KUBECONFIG"
+chmod 600 "$KUBECONFIG"
 
-# Set KUBECONFIG environment variable for Helm and kubectl to access k3s cluster
-export KUBECONFIG=/etc/rancher/k3s/k3s.yaml
+# set kubeconfig env variable on every remote login
+echo "export KUBECONFIG=~/.kube/config" >> ~/.bashrc
+
+# set kubectl alias = kube
+echo "alias kube=kubectl" >> ~/.bashrc
+
+
+# download unzip cmd 
+sudo apt update
+sudo apt install unzip
+
+# download aws cli 
+curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+unzip awscliv2.zip
+sudo ./aws/install
+
 
 # Install Helm
 curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
@@ -23,3 +38,5 @@ helm repo update
 # Install NGINX Ingress Controller via Helm
 helm install nginx-ingress ingress-nginx/ingress-nginx \
     --set controller.publishService.enabled=true
+
+
