@@ -50,7 +50,7 @@ pipeline {
                                 sshTransfer(
                                     cleanRemote: false,
                                     excludes: '',
-                                    execCommand: 'kubectl apply -f test.txt 2> log.txt',
+                                    execCommand: 'kubectl apply -f python-deployment.yaml 2> log.txt',
                                     execTimeout: 120000,
                                     flatten: false,
                                     makeEmptyDirs: false,
