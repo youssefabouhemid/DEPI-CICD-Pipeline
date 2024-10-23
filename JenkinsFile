@@ -54,7 +54,7 @@ pipeline {
                                 sshTransfer(
                                     cleanRemote: false,
                                     excludes: '',
-                                    execCommand: 'kubectl apply -f kubernetes/python-deployment.yaml 2> log.txt',
+                                    execCommand: 'sudo kubectl apply -f kubernetes/python-deployment.yaml 2> log.txt',
                                     execTimeout: 120000,
                                     flatten: false,
                                     makeEmptyDirs: false,
